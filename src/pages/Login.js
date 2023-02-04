@@ -1,129 +1,68 @@
-import "tailwindcss/tailwind.css";
 import React from 'react';
-import '../assets/css/Login.css';
-import { useState } from "react";
-import { useAuth } from "../context/authContext";
-import { useNavigate } from "react-router-dom";
-import axios from 'axios'; 
-import Mapa from "./Mapa";
+import "tailwindcss/tailwind.css";
+import { MapContainer, TileLayer} from "react-leaflet";
+import '../assets/css/Mapa.css';
+import "leaflet/dist/leaflet.css";
+import Markers from '../components/Marker';
+import packageInfo from "../assets/data.json"
+import { useAuth } from '../context/authContext';
 
 
-const Login = ()  => {
-  const navigate = useNavigate();
+const Mapa = () => {
 
-const [username, setUsername] = useState ("");
-const [password, setPassword] = useState ("");
+    const {userNot,logout,loading} = useAuth()
+    console.log("user "+userNot)
 
-    
-const handleSubmit = async (e) =>{
-  try{
-    const res = await login(username, password);
-      navigate("/mapa");
-  }catch (error){
-    console.log(error.message);
-  }
-};
+    const handleLogout = async () =>{
+        await logout()
+        
+    }
 
-const handleGoogleSigin = async() => {
-  try{
-    await loginWithGoogle();
-    navigate("/mapa");
-  }catch (error){
-    console.log(error.message);
-  }
-}
-
-const {login, loginWithGoogle} = useAuth()
-
+    if (loading) return <h1>loading </h1>
 
     return (
-        <div className="min-h-screen bg-[#252831] grid grid-cols-1 lg:grid-cols-2">
-  <div className="text-white flex flex-col items-center justify-center gap-8 p-8 max-w-lg mx-auto">
-    
-    <div className="flex flex-col gap-1 w-full">
-      <h1 className="text-4xl font-medium">Iniciar sesión</h1>
-      <p className="text-gray-400">
-        Ingresa a Petali con las credenciales de tu amiguito.
-      </p>
-    </div>
-   
-    <div className="w-full">
-      <button
-       onClick={handleGoogleSigin}
-        type="button"
-        className="w-full flex items-center justify-center gap-2 border p-2 px-4 rounded-full"
-      >
-        <img
-          src="https://cdn-icons-png.flaticon.com/512/281/281764.png"
-          alt="login alt"
-          width="20"
-          height="20"
-        />
-        <span className="ml-2">Ingresar con Google</span>
-      </button>
-    </div>
-    
-    <form className="flex flex-col gap-4">
-      <div>
-        <label htmlFor="email" className="text-gray-200">
-          Nombre mascota *
-        </label>
-        <input
-          id="username"
-          name="username"
-          autoComplete="off"
-          className="w-full py-2 px-4 bg-transparent border rounded-full mt-2 outline-none focus:border-indigo-400"
-          placeholder="Ingresa el nombre de tu mascota"
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="password" className="text-gray-200">
-          Contraseña *
-        </label>
-        <input
-          type="password"
-          id="password"
-          name = "password"
-          autoComplete="off"
-          className="w-full py-2 px-4 bg-transparent border rounded-full mt-2 outline-none focus:border-indigo-400"
-          placeholder="Ingresa tu contraseña"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 order-2 md:order-1">
-        <span className="text-gray-400">
-          ¿No tienes cuenta?{" "}
-          <a
-            href="register"
-            className="text-indigo-400 hover:text-indigo-500 transition-colors"
-          >
-            Registrate
-          </a>
-        </span>
-        <a
-          href="/#"
-          className="text-gray-400 hover:text-gray-200 transition-colors"
-        >
-          ¿Olvidaste tu contraseña?
-        </a>
-      </div>
-      <div className="mt-4 order-1 md:order-2">
-        <button
-          type="submit"
-          onClick={handleSubmit}
-          className="w-full bg-indigo-700 p-2 rounded-full hover:bg-indigo-800 transition-colors"
-        >
-          Iniciar sesión
-        </button>
-      </div>
-    </form>
-  </div>
+        <div>
+            <div className="w-full bg-[#252831] p-4 flex flex-col xl:flex-row gap-4 items-center justify-center md:justify-between">
+                <h1 className="uppercase font-semibold text-yellow-400 cursor-pointer text-xl">
+                    Petali
+                </h1>
+                <nav className="flex items-center gap-4">
+                    <a
+                        href="/#"
+                        className="xl:py-1 xl:px-2 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                        Inicio
+                    </a>
+                    <a
+                        href="/#"
+                        className="xl:py-1 xl:px-2 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                        Nosotros
+                    </a>
+                    <a
+                        href="/#"
+                        className="xl:py-1 xl:px-2 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                        Destacados
+                    </a>
+                    <a
+                        onClick={handleLogout}
+                        href="/login"
+                        className="xl:py-1 xl:px-2 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                        Salir
+                    </a>
+                </nav>
+            </div>
+            <MapContainer center={[3.43722, -76.5225]} zoom={13}>
+                <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                />
+                <Markers parques={packageInfo.parques} />
 
-  <div className="bgr hidden lg:block"></div>
-</div>
-
+            </MapContainer> </div>
     );
 }
 
-export default Login;
+export default Mapa;
