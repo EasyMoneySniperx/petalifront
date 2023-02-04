@@ -21,7 +21,7 @@ export function AuthProvider({children}) {
 
         const login = async (username, password) =>{
             try {
-              axios.post(`http://127.0.0.1:8000/api/login/`, {username , password})
+              axios.post(`petaliback.vercel.app/api/login/`, {username , password})
               .then(res => {
                 console.log(res);
                 console.log("data "+username +"daaa" +password);

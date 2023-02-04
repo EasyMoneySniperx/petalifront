@@ -1,7 +1,28 @@
 import "tailwindcss/tailwind.css";
 import React from 'react';
+import { useState } from "react";
+import Swal from 'sweetalert2'
+
+
 
 const Calificanos = ()  => {
+  const [number, setCalification] = useState ("");
+  const [state, setState] = useState (false);
+
+  const calificacion = (number, state) => {
+      if(number >= 0 && number<=2){
+        Swal.fire('No me gustó esta recomendacion')
+      }else if(number == 3){
+        <h1>Muy regular</h1>
+        Swal.fire('Muy regular')
+      }else if(number==4 || number==5){
+        Swal.fire('Excelente recomendacion')
+        return "Excelente recomendacion"
+      }else if (number > 5){
+        Swal.fire('Gracias por tu califación tan alta, pero la calificación es hasta 5 :D')
+      }
+  }
+
     return (
         
         <div class="inicio relative h-screen overflow-hidden bg-[#252831]">
@@ -32,10 +53,14 @@ const Calificanos = ()  => {
           autoComplete="off"
           className="w-25 bg-gray-100 p-2  py-2 px-4 bg-transparent border rounded mt-2 outline-none focus:border-yellow-400"
           placeholder="Ingresa tu calificación"
+          onChange={(e) => setCalification(e.target.value)}
+          
         />
         <button
           type="submit"
           className="w-50 bg-gray-100 p-2 py-2 rounded mt-2 hover:bg-yellow-400 transition-colors"
+          onClick={() => calificacion(number)}
+
         >
           Enviar
         </button>
